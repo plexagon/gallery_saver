@@ -63,25 +63,26 @@ class GallerySaver internal constructor(private val activity: Activity) :
 
     private fun saveMediaFile() {
         uiScope.launch {
+            var localPath: String?
             val success = async(Dispatchers.IO) {
                 if (mediaType == MediaType.video) {
-                    FileUtils.insertVideo(activity.contentResolver, filePath, albumName, toDcim)
+                    localPath = FileUtils.insertVideo(activity.contentResolver, filePath, albumName, toDcim)
                 } else {
-                    FileUtils.insertImage(activity.contentResolver, filePath, albumName, toDcim)
+                    localPath = FileUtils.insertImage(activity.contentResolver, filePath, albumName, toDcim)
                 }
             }
             success.await()
-            finishWithSuccess()
+            finishWithSuccess(localPath)
         }
     }
 
-    private fun finishWithSuccess() {
-        pendingResult!!.success(true)
+    private fun finishWithSuccess(localIdentifier: String?) {
+        pendingResult!!.success(localIdentifier)
         pendingResult = null
     }
 
     private fun finishWithFailure() {
-        pendingResult!!.success(false)
+        pendingResult!!.success(null)
         pendingResult = null
     }
 

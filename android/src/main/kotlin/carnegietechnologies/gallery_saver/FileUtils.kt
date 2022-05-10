@@ -35,14 +35,14 @@ internal object FileUtils {
      * @param path            - path to temp file that needs to be stored
      * @param folderName      - folder name for storing image
      * @param toDcim          - whether the file should be saved to DCIM
-     * @return true if image was saved successfully
+     * @return path of saved image if successfull
      */
     fun insertImage(
         contentResolver: ContentResolver,
         path: String,
         folderName: String?,
         toDcim: Boolean
-    ): Boolean {
+    ): String? {
         val file = File(path)
         val extension = MimeTypeMap.getFileExtensionFromUrl(file.toString())
         val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
@@ -106,12 +106,12 @@ internal object FileUtils {
             }
         } catch (e: IOException) {
             contentResolver.delete(imageUri!!, null, null)
-            return false
+            return null
         } catch (t: Throwable) {
-            return false
+            return null
         }
 
-        return true
+        return imageUri?.getPath()
     }
 
     /**
@@ -246,7 +246,7 @@ internal object FileUtils {
      * @param path            - path to temp file that needs to be stored
      * @param folderName      - folder name for storing video
      * @param toDcim          - whether the file should be saved to DCIM
-     * @return true if video was saved successfully
+     * @return path of saved video if successfull
      */
     fun insertVideo(
         contentResolver: ContentResolver,
@@ -254,7 +254,7 @@ internal object FileUtils {
         folderName: String?,
         toDcim: Boolean,
         bufferSize: Int = BUFFER_SIZE
-    ): Boolean {
+    ): String? {
         val inputFile = File(inputPath)
         val inputStream: InputStream?
         val outputStream: OutputStream?
@@ -307,14 +307,14 @@ internal object FileUtils {
                     }
                 }
             }
+            return url.getPath()
         } catch (fnfE: FileNotFoundException) {
             Log.e("GallerySaver", fnfE.message ?: fnfE.toString())
-            return false
+            return null
         } catch (e: Exception) {
             Log.e("GallerySaver", e.message ?: e.toString())
-            return false
+            return null
         }
-        return true
     }
 
     private fun getAlbumFolderPath(

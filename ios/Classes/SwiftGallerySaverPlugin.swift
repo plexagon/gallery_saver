@@ -47,13 +47,13 @@ public class SwiftGallerySaverPlugin: NSObject, FlutterPlugin {
                 if status == .authorized{
                     self._saveMediaToAlbum(path, mediaType, albumName, result)
                 } else {
-                    result(false);
+                    result(nil);
                 }
             })
         } else if status == .authorized {
             self._saveMediaToAlbum(path, mediaType, albumName, result)
         } else {
-            result(false);
+            result(nil);
         }
     }
     
@@ -67,13 +67,13 @@ public class SwiftGallerySaverPlugin: NSObject, FlutterPlugin {
             // create photos album
             createAppPhotosAlbum(albumName: albumName!) { (error) in
                 guard error == nil else {
-                    flutterResult(false)
+                    flutterResult(nil)
                     return
                     }
                 if let album = self.fetchAssetCollectionForAlbum(albumName!){
                     self.saveFile(imagePath, mediaType, album, flutterResult)
                 } else {
-                    flutterResult(false)
+                    flutterResult(nil)
                 }
             }
         }
@@ -82,6 +82,7 @@ public class SwiftGallerySaverPlugin: NSObject, FlutterPlugin {
     private func saveFile(_ filePath: String, _ mediaType: MediaType, _ album: PHAssetCollection?,
                           _ flutterResult: @escaping FlutterResult) {
         let url = URL(fileURLWithPath: filePath)
+        var localId: String?
         PHPhotoLibrary.shared().performChanges({
             let assetCreationRequest = mediaType == .image ?
                 PHAssetChangeRequest.creationRequestForAssetFromImage(atFileURL: url)
@@ -93,11 +94,12 @@ public class SwiftGallerySaverPlugin: NSObject, FlutterPlugin {
                     }
                 assetCollectionChangeRequest.addAssets(NSArray(array: [createdAssetPlaceholder]))
             }
+            localId = assetCreationRequest.placeholderForCreatedAsset?.localIdentifier
         }) { (success, error) in
             if success {
-                flutterResult(true)
+                flutterResult(localId)
             } else {
-                flutterResult(false)
+                flutterResult(nil)
             }
         }
     }
