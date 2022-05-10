@@ -307,7 +307,7 @@ internal object FileUtils {
                     }
                 }
             }
-            return url.getPath()
+            return url?.getPath()
         } catch (fnfE: FileNotFoundException) {
             Log.e("GallerySaver", fnfE.message ?: fnfE.toString())
             return null

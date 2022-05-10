@@ -63,7 +63,7 @@ class GallerySaver internal constructor(private val activity: Activity) :
 
     private fun saveMediaFile() {
         uiScope.launch {
-            var localPath: String?
+            var localPath: String? = null
             val success = async(Dispatchers.IO) {
                 if (mediaType == MediaType.video) {
                     localPath = FileUtils.insertVideo(activity.contentResolver, filePath, albumName, toDcim)
