@@ -94,7 +94,7 @@ public class SwiftGallerySaverPlugin: NSObject, FlutterPlugin {
                     }
                 assetCollectionChangeRequest.addAssets(NSArray(array: [createdAssetPlaceholder]))
             }
-            localId = assetCreationRequest.placeholderForCreatedAsset?.localIdentifier
+            localId = assetCreationRequest?.placeholderForCreatedAsset?.localIdentifier
         }) { (success, error) in
             if success {
                 flutterResult(localId)
